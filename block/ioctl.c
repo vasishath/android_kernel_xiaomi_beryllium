@@ -512,7 +512,11 @@ int blkdev_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
 	case BLKROSET:
 		return blkdev_roset(bdev, mode, cmd, arg);
 	case BLKDISCARD:
-		return blk_ioctl_discard(bdev, mode, arg, 0);
+		if (blk_ioctl_discard(bdev, mode, arg, 0)) {
+            return blk_ioctl_zeroout(bdev, mode, arg);
+        } else {
+            return 0;
+        }
 	case BLKSECDISCARD:
 		return blk_ioctl_discard(bdev, mode, arg,
 				BLKDEV_DISCARD_SECURE);
